@@ -1,0 +1,51 @@
+from datetime import *
+
+pattern = '%d.%m.%Y'
+
+
+def is_available_date(booked_dates, date_for_booking):
+    ban_booked_dates = []
+    true_date_for_booking = []
+    # Следующий цикл создаёт список дат, в которые бронирование не возможно
+    for i in booked_dates:
+        if len(i) == 10:
+            x = datetime.strptime(i, pattern).date()
+            ban_booked_dates.append(x)
+        else:
+            some_dates = i.split('-')
+            x = datetime.strptime(some_dates[0], pattern).date()
+            y = datetime.strptime(some_dates[1], pattern).date()
+            while x <= y:
+                ban_booked_dates.append(x)
+                x += timedelta(days=1)
+    # Далее создаётся список дат, желаемых для бронирования
+    if len(date_for_booking) == 10:
+        n = datetime.strptime(date_for_booking, pattern).date()
+        true_date_for_booking.append(n)
+    else:
+        needs_dates = date_for_booking.split('-')
+        k = datetime.strptime(needs_dates[0], pattern).date()
+        l = datetime.strptime(needs_dates[1], pattern).date()
+        while k <= l:
+            true_date_for_booking.append(k)
+            k += timedelta(days=1)
+    flag = True
+    # Далее, мы перебираем каждую дату из отрезка, желаемого для бронирования и проверяем, есть ли эта дата в недоступных
+    # для бронирования датах
+    if len(true_date_for_booking) == 1:
+        if true_date_for_booking[0] in ban_booked_dates:
+            flag = False
+        else:
+            flag = True
+    else:
+        for i in true_date_for_booking:
+            if i in ban_booked_dates:
+                flag = False
+                break
+            else:
+                continue
+
+    if flag:
+        return True
+    else:
+        return False
